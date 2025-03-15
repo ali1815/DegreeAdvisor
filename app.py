@@ -5,13 +5,13 @@ import openai
 import pandas as pd
 
 # Load the data
-careers_df = pd.read_csv('/mnt/data/careers.csv')
-programs_df = pd.read_csv('/mnt/data/programs.csv')
-scholarships_df = pd.read_csv('/mnt/data/scholarships.csv')
-universities_df = pd.read_csv('/mnt/data/universities.csv')
+careers_df = pd.read_csv('careers.csv')
+programs_df = pd.read_csv('programs.csv')
+scholarships_df = pd.read_csv('scholarships.csv')
+universities_df = pd.read_csv('universities.csv')
 
 # Set your OpenAI API key
-openai.api_key = 'your-openai-api-key'
+openai.api_key = ''
 
 # Streamlit UI
 st.title("Degree Recommendation System for Pakistani Students")
