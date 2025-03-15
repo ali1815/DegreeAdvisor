@@ -1,8 +1,7 @@
 import streamlit as st
-import pytesseract
-from PIL import Image
-import openai
+import easyocr
 import pandas as pd
+import openai
 
 # Load the data
 careers_df = pd.read_csv('careers.csv')
@@ -10,8 +9,11 @@ programs_df = pd.read_csv('programs.csv')
 scholarships_df = pd.read_csv('scholarships.csv')
 universities_df = pd.read_csv('universities.csv')
 
-# Set your OpenAI API key
-openai.api_key = ''
+# Set OpenAI API key for generating degree recommendations
+openai.api_key = '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'
+
+# Initialize EasyOCR reader
+reader = easyocr.Reader(['en'])  # You can add more languages if needed
 
 # Streamlit UI
 st.title("Degree Recommendation System for Pakistani Students")
@@ -20,17 +22,20 @@ st.title("Degree Recommendation System for Pakistani Students")
 st.subheader("Upload your Transcript")
 uploaded_file = st.file_uploader("Choose a file", type=["jpg", "jpeg", "png", "pdf"])
 
+def extract_text_from_image(image):
+    """Extracts text from an image using EasyOCR."""
+    result = reader.readtext(image)
+    text = ' '.join([item[1] for item in result])  # Extract the text from OCR results
+    return text
+
 if uploaded_file is not None:
-    # Process the uploaded file
+    # Process the uploaded file (image format)
     if uploaded_file.type in ["image/jpeg", "image/png", "image/jpg"]:
-        # Convert image to text using OCR
-        img = Image.open(uploaded_file)
-        transcript_text = pytesseract.image_to_string(img)
-    elif uploaded_file.type == "application/pdf":
-        # For PDF, you would need a different approach, but for simplicity, we'll leave it out
-        st.warning("PDF support coming soon!")
+        transcript_text = extract_text_from_image(uploaded_file)
+    else:
+        st.warning("Only image files (JPEG, PNG, JPG) are supported for OCR.")
         transcript_text = ""
-    
+
     # Display the transcript content
     st.subheader("Transcript Extracted Text")
     st.text_area("Extracted Text", transcript_text, height=300)
@@ -62,7 +67,6 @@ def generate_recommendations(transcript_data):
 
 # Function to fetch scholarships and universities based on the degree suggestion
 def fetch_scholarships_and_universities(degree_recommendation):
-    # Example hardcoded data (Replace with actual data fetching from a database or API)
     scholarships = scholarships_df[['name', 'eligibility', 'coverage', 'application_deadline']].to_string(index=False)
     universities = universities_df[['name', 'location', 'ranking', 'tuition_range']].to_string(index=False)
     application_steps = "1. Register on the university portal\n2. Submit application form\n3. Attach required documents"
