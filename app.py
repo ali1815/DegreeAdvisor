@@ -10,7 +10,7 @@ scholarships_df = pd.read_csv('scholarships.csv')
 universities_df = pd.read_csv('universities.csv')
 
 # Set OpenAI API key for generating degree recommendations
-openai.api_key = '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'
+openai.api_key = ''
 
 # Initialize EasyOCR reader
 reader = easyocr.Reader(['en'])  # You can add more languages if needed
